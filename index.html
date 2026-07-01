@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doorprize Multi Pemenang</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
+
+  <main class="container">
+    <section class="card hero-card">
+      <div class="hero-copy">
+        <span class="eyebrow">Doorprize Interaktif</span>
+        <h1>Acak nama dengan tampilan lebih seru dan hasil lebih meriah</h1>
+        <p class="subtitle">Pilih beberapa pemenang sekaligus, tampilkan animasi nama berputar, lalu umumkan hasil dengan kartu warna-warni.</p>
+        <div class="hero-actions">
+          <button id="heroDrawButton" type="button">Mulai Undi</button>
+        </div>
+      </div>
+
+      <div class="stage-panel">
+        <div class="stage-header">
+          <span class="stage-dot"></span>
+          <span class="stage-dot"></span>
+          <span class="stage-dot"></span>
+        </div>
+        <div class="stage-body">
+          <p class="stage-label">Sedang Diacak</p>
+          <div id="shuffleDisplay" class="shuffle-display">Siap untuk mulai undian</div>
+          <p class="stage-hint">Klik tombol undi untuk menampilkan efek acak nama.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card input-card">
+      <div class="section-heading">
+        <h2>Pengaturan Undian</h2>
+        <span class="badge">Multi Pemenang</span>
+      </div>
+
+      <label for="participants">Daftar Peserta</label>
+      <textarea
+        id="participants"
+        rows="12"
+        placeholder="Satu nama per baris&#10;Contoh:&#10;Andi&#10;Budi&#10;Citra"
+      ></textarea>
+
+      <div class="controls">
+        <div class="field">
+          <label for="winnerCount">Jumlah Pemenang</label>
+          <input id="winnerCount" type="number" min="1" value="1">
+        </div>
+
+        <div class="button-row">
+          <button id="drawButton" type="button">Mulai Undi</button>
+          <button id="resetButton" type="button" class="secondary">Reset Hasil</button>
+        </div>
+      </div>
+
+      <div id="message" class="message" aria-live="polite"></div>
+    </section>
+
+    <section class="card">
+      <div class="section-heading">
+        <h2>Hasil Undian</h2>
+        <span id="statusBadge" class="badge badge-muted">Menunggu</span>
+      </div>
+
+      <div class="stats">
+        <div class="stat-box stat-purple">
+          <span class="stat-label">Peserta Valid</span>
+          <strong id="totalParticipants">0</strong>
+        </div>
+        <div class="stat-box stat-pink">
+          <span class="stat-label">Sudah Menang</span>
+          <strong id="totalWinners">0</strong>
+        </div>
+        <div class="stat-box stat-blue">
+          <span class="stat-label">Sisa Peserta</span>
+          <strong id="remainingParticipants">0</strong>
+        </div>
+      </div>
+
+      <div class="textarea-header">
+        <label for="winnersTextarea">Daftar Pemenang</label>
+        <button id="copyWinnersButton" type="button" class="tertiary">Copy</button>
+      </div>
+      <textarea
+        id="winnersTextarea"
+        class="winner-textarea"
+        rows="8"
+        readonly
+        placeholder="Pemenang akan muncul di sini (satu nama per baris)"
+      ></textarea>
+
+      <div class="result-block">
+        <h3>Pemenang Ronde Terakhir</h3>
+        <ol id="winnerList" class="winner-list">
+          <li class="placeholder">Belum ada pemenang.</li>
+        </ol>
+      </div>
+
+      <div class="result-block">
+        <h3>Riwayat Undian</h3>
+        <ul id="historyList" class="history-list">
+          <li class="placeholder">Belum ada riwayat undian.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <script src="./script.js"></script>
+</body>
+</html>
