@@ -2,6 +2,8 @@ const participantsInput = document.getElementById("participants");
 const winnerCountInput = document.getElementById("winnerCount");
 const drawButton = document.getElementById("drawButton");
 const heroDrawButton = document.getElementById("heroDrawButton");
+const stopButton = document.getElementById("stopButton");
+const heroStopButton = document.getElementById("heroStopButton");
 const resetButton = document.getElementById("resetButton");
 const messageBox = document.getElementById("message");
 const shuffleDisplay = document.getElementById("shuffleDisplay");
@@ -27,7 +29,10 @@ const state = {
   winners: [],
   rounds: [],
   isDrawing: false,
-  shuffleTimerId: null
+  shuffleTimerId: null,
+  stopTimeoutId: null,
+  currentPreview: [],
+  previewCount: 1
 };
 
 const storageKey = "doorprize_state_v1";
@@ -178,6 +183,11 @@ function setDrawButtonsDisabled(disabled) {
   heroDrawButton.disabled = disabled;
 }
 
+function setStopButtonsDisabled(disabled) {
+  stopButton.disabled = disabled;
+  heroStopButton.disabled = disabled;
+}
+
 function syncParticipantsTextarea() {
   const participants = getParticipants();
   const remaining = participants.filter((participant) => !state.winners.includes(participant));
@@ -186,30 +196,30 @@ function syncParticipantsTextarea() {
 
 function runShuffleAnimation(pool, previewCount, onComplete) {
   const shuffledPool = shuffle(pool);
-  let step = 0;
-  const maxSteps = 18;
-
   clearInterval(state.shuffleTimerId);
+  clearTimeout(state.stopTimeoutId);
+  state.stopTimeoutId = null;
   const safePreviewCount = Math.max(1, Math.min(previewCount, pool.length));
   const initialLines = Array.from({ length: safePreviewCount }, (_, index) =>
     index === 0 ? "Mengacak nama..." : "..."
   );
   setStageState(initialLines, "Mengacak", true);
+  state.previewCount = safePreviewCount;
+  state.currentPreview = [];
 
   state.shuffleTimerId = window.setInterval(() => {
     const previewBatch = shuffle(shuffledPool).slice(0, safePreviewCount);
+    state.currentPreview = previewBatch;
     setStageState(previewBatch, "Mengacak", true);
-    step += 1;
-
-    if (step >= maxSteps) {
-      clearInterval(state.shuffleTimerId);
-      state.shuffleTimerId = null;
-      onComplete();
-    }
   }, 120);
 }
 
 function finalizeDraw(winners) {
+  clearInterval(state.shuffleTimerId);
+  clearTimeout(state.stopTimeoutId);
+  state.shuffleTimerId = null;
+  state.stopTimeoutId = null;
+
   state.winners.push(...winners);
   state.rounds.unshift(winners);
 
@@ -222,7 +232,25 @@ function finalizeDraw(winners) {
   showMessage(`${winners.length} pemenang berhasil dipilih.`, "success");
   state.isDrawing = false;
   setDrawButtonsDisabled(false);
+  setStopButtonsDisabled(true);
   saveAppState();
+}
+
+function stopAndFinalize() {
+  if (!state.isDrawing) {
+    return;
+  }
+
+  const winners = Array.isArray(state.currentPreview) && state.currentPreview.length
+    ? state.currentPreview.slice(0, state.previewCount)
+    : [];
+
+  if (!winners.length) {
+    showMessage("Belum ada nama yang diacak.", "error");
+    return;
+  }
+
+  finalizeDraw(winners);
 }
 
 function drawWinners() {
@@ -257,22 +285,27 @@ function drawWinners() {
     return;
   }
 
-  const winners = shuffle(remaining).slice(0, requestedWinnerCount);
   const previewCount = Math.min(requestedWinnerCount, remaining.length);
   state.isDrawing = true;
+  state.currentPreview = [];
   setDrawButtonsDisabled(true);
+  setStopButtonsDisabled(false);
   showMessage("Sedang mengacak nama peserta...", "success");
-  runShuffleAnimation(remaining, previewCount, () => finalizeDraw(winners));
+  runShuffleAnimation(remaining, previewCount, stopAndFinalize);
 }
 
 function resetResults() {
   const allParticipants = getAllKnownParticipants();
   clearInterval(state.shuffleTimerId);
+  clearTimeout(state.stopTimeoutId);
   state.shuffleTimerId = null;
+  state.stopTimeoutId = null;
+  state.currentPreview = [];
   state.winners = [];
   state.rounds = [];
   state.isDrawing = false;
   setDrawButtonsDisabled(false);
+  setStopButtonsDisabled(true);
   participantsInput.value = allParticipants.join("\n");
   renderWinnerList([]);
   renderHistory();
@@ -285,6 +318,8 @@ function resetResults() {
 
 drawButton.addEventListener("click", drawWinners);
 heroDrawButton.addEventListener("click", drawWinners);
+stopButton.addEventListener("click", stopAndFinalize);
+heroStopButton.addEventListener("click", stopAndFinalize);
 resetButton.addEventListener("click", resetResults);
 participantsInput.addEventListener("input", () => {
   renderStats();
@@ -316,3 +351,4 @@ renderWinnersTextarea();
 renderWinnerList(state.rounds[0] ?? []);
 renderStats();
 setStageState(state.rounds[0]?.length ? state.rounds[0] : "Siap untuk mulai undian", state.rounds[0]?.length ? "Selesai" : "Menunggu", false);
+setStopButtonsDisabled(true);
