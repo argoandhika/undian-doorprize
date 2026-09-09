@@ -487,6 +487,41 @@ button:disabled {
   padding: 8px 0;
 }
 
+.result-block-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.result-block-header h3 {
+  margin: 0;
+}
+
+.btn-undo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: opacity 0.18s, transform 0.18s;
+  box-shadow: 0 3px 10px rgba(239, 68, 68, 0.28);
+}
+
+.btn-undo:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
 .bg-orb {
   position: fixed;
   border-radius: 999px;
