@@ -4,122 +4,370 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Doorprize Multi Pemenang</title>
-  <link rel="stylesheet" href="./styles.css?v=2">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css?v=4">
 </head>
 <body>
+
+  <!-- Ambient orbs -->
   <div class="bg-orb orb-1"></div>
   <div class="bg-orb orb-2"></div>
   <div class="bg-orb orb-3"></div>
 
-  <main class="container">
-    <section class="card hero-card">
-      <div class="hero-copy">
-        <span class="eyebrow">Doorprize Interaktif</span>
-        <h1>Acak nama dengan tampilan lebih seru dan hasil lebih meriah</h1>
-        <p class="subtitle">Pilih beberapa pemenang sekaligus, tampilkan animasi nama berputar, lalu umumkan hasil dengan kartu warna-warni.</p>
-      </div>
+  <!-- ═══════════════════════════════════════
+       TOP NAVBAR
+  ═══════════════════════════════════════ -->
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <span class="navbar-logo">🎉</span>
+      <span class="navbar-title">Doorprize</span>
+    </div>
 
-      <div class="stage-panel">
-        <div class="stage-header">
-          <div class="stage-dots">
-            <span class="stage-dot"></span>
-            <span class="stage-dot"></span>
-            <span class="stage-dot"></span>
-          </div>
-          <div class="stage-controls">
-            <button id="heroDrawButton" type="button">Mulai Undi</button>
-            <button id="heroStopButton" type="button" class="danger" disabled>Stop</button>
-          </div>
-        </div>
-        <div class="stage-body">
+    <div class="navbar-tabs">
+      <button class="nav-tab active" id="tabUndian" type="button" data-target="page-undian">
+        <span class="tab-icon">🎰</span>
+        <span class="tab-label">Undian</span>
+      </button>
+      <button class="nav-tab" id="tabSettings" type="button" data-target="page-settings">
+        <span class="tab-icon">⚙️</span>
+        <span class="tab-label">Pengaturan</span>
+      </button>
+    </div>
+
+    <div class="navbar-right">
+      <span id="statusBadge" class="badge badge-muted">Menunggu</span>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════════════
+       PAGE 1 — UNDIAN (Split Screen)
+  ═══════════════════════════════════════ -->
+  <div class="page active" id="page-undian">
+    <div class="ss-layout">
+
+      <!-- ── LEFT PANEL: Shuffle Stage ── -->
+      <div class="ss-left">
+
+        <div class="ss-stage">
           <p class="stage-label">Sedang Diacak</p>
           <div id="shuffleDisplay" class="shuffle-display">Siap untuk mulai undian</div>
-          <p class="stage-hint">Klik tombol undi untuk menampilkan efek acak nama.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="card input-card">
-      <div class="section-heading">
-        <h2>Pengaturan Undian</h2>
-        <span class="badge">Multi Pemenang</span>
-      </div>
-
-      <label for="participants">Daftar Peserta</label>
-      <textarea
-        id="participants"
-        rows="12"
-        placeholder="Satu nama per baris&#10;Contoh:&#10;Andi&#10;Budi&#10;Citra"
-      ></textarea>
-
-      <div class="controls">
-        <div class="field">
-          <label for="winnerCount">Jumlah Pemenang</label>
-          <input id="winnerCount" type="number" min="1" value="1">
+          <p class="stage-hint">Klik Mulai Undi untuk menampilkan efek acak nama</p>
         </div>
 
-        <div class="button-row">
-          <button id="drawButton" type="button">Mulai Undi</button>
-          <button id="stopButton" type="button" class="danger" disabled>Stop</button>
-          <button id="resetButton" type="button" class="secondary">Reset Hasil</button>
+        <div class="ss-controls">
+          <div class="vt-stats-bar">
+            <div class="vt-stat">
+              <span class="vt-stat-num" id="totalParticipants">0</span>
+              <span class="vt-stat-lbl">Peserta</span>
+            </div>
+            <div class="vt-stat">
+              <span class="vt-stat-num" id="totalWinners">0</span>
+              <span class="vt-stat-lbl">Menang</span>
+            </div>
+            <div class="vt-stat">
+              <span class="vt-stat-num" id="remainingParticipants">0</span>
+              <span class="vt-stat-lbl">Sisa</span>
+            </div>
+          </div>
+
+          <div class="vt-btn-row">
+            <button id="heroDrawButton" type="button" class="btn-vt btn-vt-draw">
+              🎰 Mulai Undi
+            </button>
+            <button id="heroStopButton" type="button" class="btn-vt btn-vt-stop danger" disabled>
+              🛑 Stop
+            </button>
+          </div>
         </div>
-      </div>
 
-      <div id="message" class="message" aria-live="polite"></div>
-    </section>
+      </div><!-- /ss-left -->
 
-    <section class="card">
-      <div class="section-heading">
-        <h2>Hasil Undian</h2>
-        <span id="statusBadge" class="badge badge-muted">Menunggu</span>
-      </div>
+      <!-- ── RIGHT PANEL: Live Winners ── -->
+      <div class="ss-right">
 
-      <div class="stats">
-        <div class="stat-box stat-purple">
-          <span class="stat-label">Peserta Valid</span>
-          <strong id="totalParticipants">0</strong>
+        <div class="ss-panel-header">
+          <div class="ss-panel-title">
+            <span class="ss-panel-icon">🏆</span>
+            <span>Pemenang</span>
+          </div>
+          <span class="ss-panel-hint">Real-time</span>
         </div>
-        <div class="stat-box stat-pink">
-          <span class="stat-label">Sudah Menang</span>
-          <strong id="totalWinners">0</strong>
-        </div>
-        <div class="stat-box stat-blue">
-          <span class="stat-label">Sisa Peserta</span>
-          <strong id="remainingParticipants">0</strong>
-        </div>
-      </div>
 
-      <div class="textarea-header">
-        <label for="winnersTextarea">Daftar Pemenang</label>
-        <button id="copyWinnersButton" type="button" class="tertiary">Copy</button>
-      </div>
-      <textarea
-        id="winnersTextarea"
-        class="winner-textarea"
-        rows="8"
-        readonly
-        placeholder="Pemenang akan muncul di sini (satu nama per baris)"
-      ></textarea>
-
-      <div class="result-block">
-        <h3>Pemenang Ronde Terakhir</h3>
-        <ol id="winnerList" class="winner-list">
-          <li class="placeholder">Belum ada pemenang.</li>
-        </ol>
-      </div>
-
-      <div class="result-block">
-        <div class="result-block-header">
-          <h3>Riwayat Undian</h3>
-          <button id="undoLastRoundButton" type="button" class="btn-undo" style="display:none">↩ Batalkan Ronde Terakhir</button>
+        <div class="ss-panel-body">
+          <ol id="winnerList" class="winner-list-vt">
+            <li class="vt-placeholder">Belum ada pemenang.</li>
+          </ol>
         </div>
-        <ul id="historyList" class="history-list">
-          <li class="placeholder">Belum ada riwayat undian.</li>
-        </ul>
-      </div>
-    </section>
-  </main>
+
+      </div><!-- /ss-right -->
+
+    </div><!-- /ss-layout -->
+  </div><!-- /page-undian -->
+
+  <!-- ═══════════════════════════════════════
+       PAGE 2 — PENGATURAN (2-Panel Layout)
+  ═══════════════════════════════════════ -->
+  <div class="page" id="page-settings">
+    <div class="cfg-layout">
+
+      <!-- ════════════════════════
+           LEFT SIDEBAR — Config Panel
+      ════════════════════════ -->
+      <aside class="cfg-sidebar">
+
+        <!-- Sidebar Header -->
+        <div class="cfg-sidebar-header">
+          <div class="cfg-sidebar-title">
+            <span class="cfg-sidebar-icon">⚙️</span>
+            <div>
+              <h2>Pengaturan</h2>
+              <p>Atur peserta &amp; undian</p>
+            </div>
+          </div>
+          <span class="badge">Multi Pemenang</span>
+        </div>
+
+        <!-- Section: Peserta -->
+        <div class="cfg-section">
+          <div class="cfg-section-label">
+            <span class="cfg-section-dot dot-purple"></span>
+            Daftar Peserta
+          </div>
+
+          <div class="cfg-field">
+            <div class="cfg-field-header">
+              <label for="participants">Nama Peserta</label>
+              <span class="cfg-field-hint" id="participantCountHint">0 nama</span>
+            </div>
+            <textarea
+              id="participants"
+              rows="10"
+              placeholder="Satu nama per baris&#10;Contoh:&#10;Andi&#10;Budi&#10;Citra"
+            ></textarea>
+            <p class="cfg-field-note">💡 Duplikat nama akan otomatis dihapus</p>
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="cfg-divider"></div>
+
+        <!-- Section: Pengaturan Undian -->
+        <div class="cfg-section">
+          <div class="cfg-section-label">
+            <span class="cfg-section-dot dot-pink"></span>
+            Pengaturan Undian
+          </div>
+
+          <div class="cfg-field">
+            <div class="cfg-field-header">
+              <label for="winnerCount">Pemenang per Ronde</label>
+              <span class="cfg-field-hint">minimal 1</span>
+            </div>
+            <div class="cfg-number-input">
+              <button type="button" class="cfg-num-btn" id="decrementBtn">−</button>
+              <input id="winnerCount" type="number" min="1" value="1">
+              <button type="button" class="cfg-num-btn" id="incrementBtn">+</button>
+            </div>
+            <p class="cfg-field-note">🎯 Jumlah pemenang yang dipilih setiap ronde undian</p>
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="cfg-divider"></div>
+
+        <!-- Action Buttons -->
+        <div class="cfg-section">
+          <div class="cfg-section-label">
+            <span class="cfg-section-dot dot-green"></span>
+            Aksi
+          </div>
+
+          <div class="cfg-action-grid">
+            <button id="drawButton" type="button" class="cfg-btn cfg-btn-primary">
+              <span class="cfg-btn-icon">🎰</span>
+              <span class="cfg-btn-text">
+                <strong>Mulai Undi</strong>
+                <small>Jalankan pengundian</small>
+              </span>
+            </button>
+            <button id="stopButton" type="button" class="cfg-btn cfg-btn-danger" disabled>
+              <span class="cfg-btn-icon">🛑</span>
+              <span class="cfg-btn-text">
+                <strong>Stop</strong>
+                <small>Hentikan &amp; simpan</small>
+              </span>
+            </button>
+            <button id="resetButton" type="button" class="cfg-btn cfg-btn-secondary">
+              <span class="cfg-btn-icon">🔄</span>
+              <span class="cfg-btn-text">
+                <strong>Reset Hasil</strong>
+                <small>Hapus semua pemenang</small>
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Message box -->
+        <div id="message" class="message" aria-live="polite"></div>
+
+      </aside><!-- /cfg-sidebar -->
+
+      <!-- ════════════════════════
+           RIGHT MAIN — Results Panel
+      ════════════════════════ -->
+      <main class="cfg-main">
+
+        <!-- Stats Row -->
+        <div class="cfg-stats-row">
+          <div class="cfg-stat-card cfg-stat-purple">
+            <div class="cfg-stat-icon">👥</div>
+            <div class="cfg-stat-body">
+              <strong id="totalParticipants2">—</strong>
+              <span>Peserta Valid</span>
+            </div>
+          </div>
+          <div class="cfg-stat-card cfg-stat-pink">
+            <div class="cfg-stat-icon">🏆</div>
+            <div class="cfg-stat-body">
+              <strong id="totalWinners2">—</strong>
+              <span>Sudah Menang</span>
+            </div>
+          </div>
+          <div class="cfg-stat-card cfg-stat-blue">
+            <div class="cfg-stat-icon">⏳</div>
+            <div class="cfg-stat-body">
+              <strong id="remainingParticipants2">—</strong>
+              <span>Sisa Peserta</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Main content area — two-column within right panel -->
+        <div class="cfg-results-grid">
+
+          <!-- Pemenang Ronde Terakhir -->
+          <div class="cfg-result-card">
+            <div class="cfg-result-card-header">
+              <div class="cfg-result-card-title">
+                <span>🥇</span>
+                <h3>Pemenang Ronde Terakhir</h3>
+              </div>
+            </div>
+            <div class="cfg-result-card-body">
+              <ol id="winnerList2" class="winner-list">
+                <li class="placeholder">Belum ada pemenang.</li>
+              </ol>
+            </div>
+          </div>
+
+          <!-- Daftar Semua Pemenang -->
+          <div class="cfg-result-card">
+            <div class="cfg-result-card-header">
+              <div class="cfg-result-card-title">
+                <span>📋</span>
+                <h3>Semua Pemenang</h3>
+              </div>
+              <button id="copyWinnersButton" type="button" class="cfg-copy-btn">
+                📋 Copy
+              </button>
+            </div>
+            <div class="cfg-result-card-body">
+              <textarea
+                id="winnersTextarea"
+                class="winner-textarea cfg-winners-textarea"
+                rows="8"
+                readonly
+                placeholder="Pemenang akan muncul di sini (satu nama per baris)"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Riwayat Undian — full width -->
+          <div class="cfg-result-card cfg-result-card-full">
+            <div class="cfg-result-card-header">
+              <div class="cfg-result-card-title">
+                <span>📜</span>
+                <h3>Riwayat Undian</h3>
+              </div>
+              <button id="undoLastRoundButton" type="button" class="btn-undo" style="display:none">↩ Batalkan Ronde Terakhir</button>
+            </div>
+            <div class="cfg-result-card-body">
+              <ul id="historyList" class="history-list">
+                <li class="placeholder">Belum ada riwayat undian.</li>
+              </ul>
+            </div>
+          </div>
+
+        </div><!-- /cfg-results-grid -->
+      </main><!-- /cfg-main -->
+
+    </div><!-- /cfg-layout -->
+  </div><!-- /page-settings -->
 
   <script src="./script.js?v=2"></script>
+
+  <!-- Tab navigation — pure UI, zero business logic -->
+  <script>
+    /* ── Tab switching ── */
+    document.querySelectorAll('.nav-tab').forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.nav-tab').forEach(function(t) { t.classList.remove('active'); });
+        document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.target).classList.add('active');
+      });
+    });
+
+    /* ── Increment / Decrement winner count ── */
+    document.getElementById('decrementBtn').addEventListener('click', function() {
+      var input = document.getElementById('winnerCount');
+      var val = parseInt(input.value, 10) || 1;
+      if (val > 1) { input.value = val - 1; input.dispatchEvent(new Event('input')); }
+    });
+    document.getElementById('incrementBtn').addEventListener('click', function() {
+      var input = document.getElementById('winnerCount');
+      var val = parseInt(input.value, 10) || 1;
+      input.value = val + 1; input.dispatchEvent(new Event('input'));
+    });
+
+    /* ── Live participant count hint ── */
+    function updateParticipantHint() {
+      var ta = document.getElementById('participants');
+      var hint = document.getElementById('participantCountHint');
+      if (!ta || !hint) return;
+      var count = ta.value.split('\n').map(function(n){ return n.trim(); }).filter(Boolean).length;
+      hint.textContent = count + ' nama';
+    }
+    document.getElementById('participants').addEventListener('input', updateParticipantHint);
+    updateParticipantHint();
+
+    /* ── Mirror stats ke card Hasil ── */
+    function mirrorStats() {
+      var ids = [
+        ['totalParticipants', 'totalParticipants2'],
+        ['totalWinners',      'totalWinners2'],
+        ['remainingParticipants', 'remainingParticipants2']
+      ];
+      ids.forEach(function(pair) {
+        var src = document.getElementById(pair[0]);
+        var dst = document.getElementById(pair[1]);
+        if (src && dst) dst.textContent = src.textContent;
+      });
+
+      /* Mirror winnerList ke winnerList2 */
+      var wl  = document.getElementById('winnerList');
+      var wl2 = document.getElementById('winnerList2');
+      if (wl && wl2) wl2.innerHTML = wl.innerHTML;
+
+      /* Update participant hint */
+      updateParticipantHint();
+    }
+
+    /* Poll every 300ms */
+    setInterval(mirrorStats, 300);
+  </script>
+
+
 </body>
 </html>
