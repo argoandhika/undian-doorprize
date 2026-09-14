@@ -1,4 +1,4 @@
-﻿// ─── Doorprize — Hardened Edition v2 ─────────────────────────────────────────
+// ─── Doorprize — Hardened Edition v2 ─────────────────────────────────────────
 // Security architecture:
 //   IIFE         → blocks all global scope access (V-01, V-04)
 //   Split storage → participants in localStorage (not sensitive),
@@ -401,6 +401,16 @@
   undoLastRoundButton.addEventListener('click', undoLastRound);
   participantsInput.addEventListener('input',   () => { renderStats(); saveAppState(); });
   winnerCountInput.addEventListener('input',    saveAppState);
+
+  // Spasi = toggle undian (Mulai jika idle, Stop jika berjalan)
+  document.addEventListener('keydown', (e) => {
+    if (e.code !== 'Space') return;
+    const tag = document.activeElement?.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'BUTTON') return;
+    e.preventDefault(); // cegah scroll halaman
+    if (state.isDrawing) { stopAndFinalize(); } else { drawWinners(); }
+  });
+
   copyWinnersButton.addEventListener('click', async () => {
     const txt = winnersTextarea.value.trim();
     if (!txt) { showMessage('Belum ada pemenang untuk dicopy.', 'error'); return; }
