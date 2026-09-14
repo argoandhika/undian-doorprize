@@ -44,65 +44,43 @@
        PAGE 1 — UNDIAN (Split Screen)
   ═══════════════════════════════════════ -->
   <div class="page active" id="page-undian">
-    <div class="ss-layout">
 
-      <!-- ── LEFT PANEL: Shuffle Stage ── -->
-      <div class="ss-left">
+    <!-- ── Full-width Shuffle Stage ── -->
+    <div class="ss-stage">
+      <p class="stage-label">Sedang Diacak</p>
+      <div id="shuffleDisplay" class="shuffle-display">Siap untuk mulai undian</div>
+      <p class="stage-hint">Klik Mulai Undi untuk menampilkan efek acak nama</p>
+    </div>
 
-        <div class="ss-stage">
-          <p class="stage-label">Sedang Diacak</p>
-          <div id="shuffleDisplay" class="shuffle-display">Siap untuk mulai undian</div>
-          <p class="stage-hint">Klik Mulai Undi untuk menampilkan efek acak nama</p>
+    <div class="ss-controls">
+      <div class="vt-stats-bar">
+        <div class="vt-stat">
+          <span class="vt-stat-num" id="totalParticipants">0</span>
+          <span class="vt-stat-lbl">Peserta</span>
         </div>
-
-        <div class="ss-controls">
-          <div class="vt-stats-bar">
-            <div class="vt-stat">
-              <span class="vt-stat-num" id="totalParticipants">0</span>
-              <span class="vt-stat-lbl">Peserta</span>
-            </div>
-            <div class="vt-stat">
-              <span class="vt-stat-num" id="totalWinners">0</span>
-              <span class="vt-stat-lbl">Menang</span>
-            </div>
-            <div class="vt-stat">
-              <span class="vt-stat-num" id="remainingParticipants">0</span>
-              <span class="vt-stat-lbl">Sisa</span>
-            </div>
-          </div>
-
-          <div class="vt-btn-row">
-            <button id="heroDrawButton" type="button" class="btn-vt btn-vt-draw">
-              🎰 Mulai Undi
-            </button>
-            <button id="heroStopButton" type="button" class="btn-vt btn-vt-stop danger" disabled>
-              🛑 Stop
-            </button>
-          </div>
+        <div class="vt-stat">
+          <span class="vt-stat-num" id="totalWinners">0</span>
+          <span class="vt-stat-lbl">Menang</span>
         </div>
-
-      </div><!-- /ss-left -->
-
-      <!-- ── RIGHT PANEL: Live Winners ── -->
-      <div class="ss-right">
-
-        <div class="ss-panel-header">
-          <div class="ss-panel-title">
-            <span class="ss-panel-icon">🏆</span>
-            <span>Pemenang</span>
-          </div>
-          <span class="ss-panel-hint">Real-time</span>
+        <div class="vt-stat">
+          <span class="vt-stat-num" id="remainingParticipants">0</span>
+          <span class="vt-stat-lbl">Sisa</span>
         </div>
+      </div>
 
-        <div class="ss-panel-body">
-          <ol id="winnerList" class="winner-list-vt">
-            <li class="vt-placeholder">Belum ada pemenang.</li>
-          </ol>
-        </div>
+      <div class="vt-btn-row">
+        <button id="heroDrawButton" type="button" class="btn-vt btn-vt-draw">
+          🎰 Mulai Undi
+        </button>
+        <button id="heroStopButton" type="button" class="btn-vt btn-vt-stop danger" disabled>
+          🛑 Stop
+        </button>
+      </div>
+    </div>
 
-      </div><!-- /ss-right -->
+    <!-- hidden winnerList so JS still renders without error -->
+    <ol id="winnerList" class="winner-list-vt" style="display:none"></ol>
 
-    </div><!-- /ss-layout -->
   </div><!-- /page-undian -->
 
   <!-- ═══════════════════════════════════════
@@ -276,7 +254,6 @@
               <textarea
                 id="winnersTextarea"
                 class="winner-textarea cfg-winners-textarea"
-                rows="8"
                 readonly
                 placeholder="Pemenang akan muncul di sini (satu nama per baris)"
               ></textarea>

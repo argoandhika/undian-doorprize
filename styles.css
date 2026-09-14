@@ -141,32 +141,16 @@ html, body {
 .page.active { display: flex; flex-direction: column; }
 
 /* ════════════════════════════════════════════════════════
-   PAGE 1 — UNDIAN (Split Screen)
+   PAGE 1 — UNDIAN (Full-width)
    ════════════════════════════════════════════════════════ */
 #page-undian {
   overflow: hidden;
-}
-
-/* ── Root split container ── */
-.ss-layout {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-/* ── LEFT panel — shuffle stage ── */
-.ss-left {
-  flex: 0 0 60%;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  position: relative;
 }
 
 /* Subtle radial spotlight behind shuffle */
-.ss-left::before {
+#page-undian::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -204,14 +188,14 @@ html, body {
 /* THE BIG NAME BOX */
 .shuffle-display {
   width: 100%;
-  max-width: 900px;
-  min-height: 160px;
+  max-width: 1100px;
+  min-height: 200px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 16px;
-  padding: 44px 48px;
+  padding: 56px 64px;
   border-radius: 28px;
   background:
     radial-gradient(ellipse 80% 70% at 50% 30%, rgba(139,92,246,.20), transparent 65%),
@@ -219,7 +203,7 @@ html, body {
   border: 1px solid rgba(255,255,255,.12);
   box-shadow: inset 0 1px 0 rgba(255,255,255,.15);
   color: #fff;
-  font-size: clamp(2.8rem, 6vh, 6rem);
+  font-size: clamp(3rem, 8vh, 8rem);
   font-weight: 900;
   letter-spacing: .02em;
   text-align: center;
@@ -820,7 +804,8 @@ html, body {
   flex: 1;
   padding: 16px 20px 20px;
   overflow-y: auto;
-  min-height: 120px;
+  display: flex;
+  flex-direction: column;
 }
 .cfg-result-card-body::-webkit-scrollbar { width: 4px; }
 .cfg-result-card-body::-webkit-scrollbar-track { background: transparent; }
@@ -844,10 +829,10 @@ html, body {
 }
 .cfg-copy-btn:hover { background: #e2e8f0; transform: none; opacity: 1; }
 
-/* Winners textarea inside card */
+/* Winners textarea inside card — stretches to match sibling card height */
 .cfg-winners-textarea {
+  flex: 1;
   width: 100%;
-  min-height: 160px;
   font-size: .88rem;
   line-height: 1.7;
   border-radius: 12px;
